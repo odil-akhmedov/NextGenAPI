@@ -9,10 +9,16 @@
 <link type="text/css" href="../static/css/ng-table.min.css" rel="stylesheet"/>
 </head>
 <style>
-	#personContext {
+#personContext {
 	margin-left: 15px;
 	margin-top: 10px;
 	margin-right: 15px;
+}
+.mediumWidth {
+	width: 120px;
+}
+.smallWidth {
+	width: 50px;
 }
 </style>
 <script>
@@ -21,6 +27,7 @@ var app = angular.module('myApp', []);
 
 function PersonController($scope, $http){
     $scope.editable = false;
+    $scope.success = "untried";
 	
     $scope.getPersonDataFromServer = function() {           
         $scope.info = angular.fromJson('${person}'); 
@@ -29,21 +36,83 @@ function PersonController($scope, $http){
  	// Change the table cells to fields which the user can edit.
     $scope.makeEditable = function() {
     	$scope.editable = true;
-    }
+    };
 
-    // Change the table cells to read-only text which the user cannot edit.
-    $scope.saveEdits = function() {
-    	$scope.editable = false;
-    }
+//    // Change the table cells to read-only text which the user cannot edit.
+//    $scope.saveEdits = function() {
+//    	$scope.editable = false;
+//    };
+    
+	// Writing it to the server
+	$scope.saveEdits = function() {
+		$scope.editable = false;
+		var personData = {
+		    "id":"I56D1C87",
+		    "version":1435095502000,
+		    "creator": "CRS_ROOT",
+		    "creation": 1435095502000,
+		    "realm": "PLATFORM-COVS",
+		    "status": "active",
+		    "name": {
+		        "prefix": "Mr.",
+		        "given": "Aaravader",
+		        "surname": "Kolis"
+		    },
+		    "addresses": [
+		        {
+		            "streets": [
+		                "86 W Rincon Ave",
+						"APT 20"
+		            ],
+		            "city": "Campbell",
+		            "state": "CA",
+		            "postal": "95008",
+		            "country": "US",
+		            "type": "main"
+		        }
+		    ],
+		    "language": "en",
+		    "timezone": "EST5EDT",
+		    "phones": [
+		        {
+		            "type": "main",
+		            "number": "248-767-1570"
+		        },
+		        {
+		            "type": "fax",
+		            "number": "248-669-5679"
+		        }
+		    ],
+		    "title": "User",
+		    "email": "aarav.kolis@desantis.org",
+		    "organization": {
+			   "id": "OPLATFORM-COVS10779993",
+			   "type": "organization",
+			   "realm": "PLATFORM-COVS"
+			},
+		    "currency": "USD"
+		   
+		};
+		var res = $http.post('updatePersonPut', personData);
+		res.success(function(data, status, headers, config) {
+			// Data is the JSON returned after a successful POST.
+			$scope.success = true;
+		});
+		res.error(function(data, status, headers, config) {
+			$scope.success = false
+			alert("failure message: " + JSON.stringify({data: data}));
+		});
+	};
 }
 
 </script>
 
 </head>
 <body>
-<a href="./index.jsp">NextGen API Client Home</a>
+<a href="../index.jsp">NextGen API Client Home</a>
 <div data-ng-app="myApp" class="context" id="personContext">
-    <div data-ng-controller="PersonController" data-ng-init="getPersonDataFromServer()">	
+    <div data-ng-controller="PersonController" data-ng-init="getPersonDataFromServer()">
+    <form data-ng-submit="submitPersonEdit()">
     	<table data-toggle="table" data-cache="false" data-row-style="rowStyle" class="table table-bordered">
     <thead>
         <tr>
@@ -70,8 +139,8 @@ function PersonController($scope, $http){
 					{{info.name.given}} {{info.name.surname}}
 				</span>
 				<span ng-if="editable === true" style="color:black">
-					First: <input type="text" data-ng-model="info.name.given"><br>
-					Last: <input type="text" data-ng-model="info.name.surname">
+					First: <input type="text" data-ng-model="info.name.given" class="mediumWidth"><br>
+					Last: <input type="text" data-ng-model="info.name.surname" class="mediumWidth">
 				</span>
 			</td>
 	        <td>
@@ -87,12 +156,12 @@ function PersonController($scope, $http){
 					<div ng-repeat="(key, address) in info.addresses">
 						<table>
 			        	<tr ng-repeat="(key, value) in address.streets">
-			        		<td>Street {{key + 1}}: </td><td><input type="text" data-ng-model="value"></td>
+			        		<td>Street {{key + 1}}: </td><td><input type="text" data-ng-model="address.streets[key]" class="mediumWidth"></td>
 			        	</tr>
-			        	<tr><td>City: </td><td><input type="text" data-ng-model="address.city"></td></tr></tr>
-			        	<tr><td>State: </td><td><input type="text" data-ng-model="address.state"></td></tr>
-			        	<tr><td>Zip: </td><td><input type="text" data-ng-model="address.postal"></td></tr>
-			        	<tr><td>Country: </td><td><input type="text" data-ng-model="address.country"></td></tr>
+			        	<tr><td>City: </td><td><input type="text" data-ng-model="address.city" class="mediumWidth"></td></tr></tr>
+			        	<tr><td>State: </td><td><input type="text" data-ng-model="address.state" class="mediumWidth"></td></tr>
+			        	<tr><td>Zip: </td><td><input type="text" data-ng-model="address.postal" class="mediumWidth"></td></tr>
+			        	<tr><td>Country: </td><td><input type="text" data-ng-model="address.country" class="mediumWidth"></td></tr>
 			        	</table>
 		        	</div>
 				</span>
@@ -103,7 +172,7 @@ function PersonController($scope, $http){
 					{{info.language}}
 				</span>
 				<span ng-if="editable === true" style="color:black">
-					<input type="text" data-ng-model="info.language">
+					<input type="text" data-ng-model="info.language" class="smallWidth">
 				</span>
 	        </td>
 	        <td>
@@ -111,7 +180,7 @@ function PersonController($scope, $http){
 					{{info.timezone}}
 				</span>
 				<span ng-if="editable === true" style="color:black">
-					<input type="text" data-ng-model="info.timezone">
+					<input type="text" data-ng-model="info.timezone" class="mediumWidth">
 				</span>
 	        </td>
 	        <td>
@@ -123,7 +192,7 @@ function PersonController($scope, $http){
 				<span ng-if="editable === true" style="color:black">
 					<div ng-repeat="phone in info.phones"><table>
 		        		<tr><td>
-		        			<input type="text" data-ng-model="phone.number">
+		        			<input type="text" data-ng-model="phone.number" class="mediumWidth">
 		        		</td><td>
 	        				<select data-ng-model="phone.type">
 							<option value="Main">Main</option>
@@ -134,7 +203,14 @@ function PersonController($scope, $http){
 				</span>
        		</td>
        		<td>{{info.title}}</td>
-       		<td>{{info.email}}</td>
+       		<td>
+       			<span ng-if="editable === false" style="color:black">
+					{{info.email}}
+				</span>
+				<span ng-if="editable === true" style="color:black">
+					Email: <input type="email" data-ng-model="info.email" class="mediumWidth">
+				</span>
+       		</td>
        		<td>
   				<p>Id: {{info.organization.id}}</p>
   				<p>Type: {{info.organization.type}}</p>
@@ -144,12 +220,25 @@ function PersonController($scope, $http){
     </thead>
 </table>
 <span ng-if="editable === false" style="color:black">
+	<!--<input type="submit" id="submit" value="Edit">-->
 	<button ng-click="makeEditable()">Edit</button>
 </span>
 <span ng-if="editable === true" style="color:black">
-	<button ng-click="saveEdits()">Save</button>
+	<input ng-click="saveEdits()" type="submit" id="submit" value="Save">
+	<!--<button ng-click="saveEdits()">Save</button>-->
 </span>
 
+<span ng-if="success === 'untried'" style="color:black">
+     		
+</span>
+<span ng-if="success === true" style="color:green">
+	The changes were successfully submitted.
+</span>
+<span ng-if="success === false" style="color:red">
+	There was an error while submitting the changes, and the request did not complete. Make sure all the data is accurate and then try again.
+</span>
+
+</form>
     </div>
     </div>
     

@@ -428,6 +428,29 @@ private static final Logger logger = Logger.getLogger(NextGenAPIcontroller.class
 //		return "JSON: The Person name: " + person.getName();
 	}
 	
+	// PUT an update to a user. A POST is used to reach this method, which then uses a PUT to the APIs.
+	@RequestMapping(value = "/updatePersonPut", method = RequestMethod.POST)
+	public @ResponseBody String updatePerson_JSON(@RequestBody String person) {
+		RestTemplate restTemplate = new RestTemplate();
+		Token token = getAccessToken(); 		//getting token data
+		String tokenType = token.getToken_type();
+		String tokentTypeCapitalized = tokenType.substring(0, 1).toUpperCase() + tokenType.substring(1);	//first letter has to be capitalized
+		String accessToken = tokentTypeCapitalized + " " + token.getAccess_token();
+		HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/vnd.com.covisint.platform.person.v1+json");
+        headers.add("Authorization", accessToken);
+        headers.add("Accept", "application/vnd.com.covisint.platform.person.v1+json");
+        
+        String url;
+    	url = "https://api.covapp.io/person/v1/persons";
+    	
+        HttpEntity<String> entity = new HttpEntity<String>(person, headers);		
+        /*HttpEntity<String> response = */restTemplate.put(url, entity, String.class);
+          
+		//return response.getBody().toString();
+        return "A put was attempted.";
+	}
+	
 	@RequestMapping(value = "/ShowInvitationList")
 	public String ShowInvitationList(ModelMap model) {
 		
