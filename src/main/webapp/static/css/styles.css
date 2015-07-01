@@ -1,0 +1,11 @@
+.context {
+	margin-left: 10px;
+	margin-top: 50px;
+	border: 1px solid black;
+	
+}
+.gridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 95%; 
+    height: 850px;
+}
