@@ -38,8 +38,7 @@ import com.nextgen.entities.Token;
 public class NextGenAPIcontroller {
 private static final Logger logger = Logger.getLogger(NextGenAPIcontroller.class);
 
-		private final String APPID = KeyKeeper.APPID;
-		private final String AUTH = KeyKeeper.AUTH;
+		private static ArrayList<String> APP = KeyKeeper.getAPP();
 	
 		/*
 		 * These here functions activate when their corresponding URLs are submitted,
@@ -183,8 +182,8 @@ private static final Logger logger = Logger.getLogger(NextGenAPIcontroller.class
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.add("type", "client_credentials");
             headers.add("Accept", "application/vnd.com.covisint.platform.oauth.token.v1+json");
-            headers.add("application-id", APPID);
-            headers.add("Authorization", "Basic " + AUTH + "==");
+            headers.add("application-id", APP.get(0));
+            headers.add("Authorization", "Basic " + APP.get(1) + "==");
             
             final HttpEntity<Token> wineRequest = new HttpEntity<Token>(token, headers);
             token = restTemplate.postForObject("https://api.covapp.io/oauth/v1/token", wineRequest,
@@ -263,8 +262,8 @@ private static final Logger logger = Logger.getLogger(NextGenAPIcontroller.class
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("type", "client_credentials");
         headers.add("Accept", "application/vnd.com.covisint.platform.oauth.token.v1+json");
-        headers.add("application-id", APPID);
-        headers.add("Authorization", "Basic " + AUTH + "==");
+        headers.add("application-id", APP.get(0));
+        headers.add("Authorization", "Basic " + APP.get(1) + "==");
         System.out.println("Headers: " + headers);
         final HttpEntity<Token> wineRequest = new HttpEntity<Token>(token, headers);
         token = restTemplate.postForObject("https://api.covapp.io/oauth/v1/token", wineRequest, Token.class);
