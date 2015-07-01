@@ -398,7 +398,8 @@ private static final Logger logger = Logger.getLogger(NextGenAPIcontroller.class
 	// POST Person attempt Version Beta
 	@RequestMapping(value = "/createPersonPostVersionBeta", method = RequestMethod.POST)
 	public @ResponseBody String savePerson_JSON(@RequestBody String person) {
-//		List<Person> persons = new ArrayList<Person>();
+		System.out.println("The person post method has been called.");
+		//		List<Person> persons = new ArrayList<Person>();
 		RestTemplate restTemplate = new RestTemplate();
 		Token token = getAccessToken(); 		//geting token data
 		String tokenType = token.getToken_type();
@@ -429,8 +430,9 @@ private static final Logger logger = Logger.getLogger(NextGenAPIcontroller.class
 	}
 	
 	// PUT an update to a user. A POST is used to reach this method, which then uses a PUT to the APIs.
-	@RequestMapping(value = "/updatePersonPut", method = RequestMethod.POST)
-	public @ResponseBody String updatePerson_JSON(@RequestBody String person) {
+	@RequestMapping(value = "PersonDetailsView/updatePersonPut/{personId}", method = RequestMethod.POST)
+	public @ResponseBody String updatePerson_JSON(@PathVariable("personId") String personId, @RequestBody String person) {
+		System.out.println("The person put method has been called.");
 		RestTemplate restTemplate = new RestTemplate();
 		Token token = getAccessToken(); 		//getting token data
 		String tokenType = token.getToken_type();
@@ -442,7 +444,7 @@ private static final Logger logger = Logger.getLogger(NextGenAPIcontroller.class
         headers.add("Accept", "application/vnd.com.covisint.platform.person.v1+json");
         
         String url;
-    	url = "https://api.covapp.io/person/v1/persons";
+    	url = "https://api.covapp.io/person/v1/persons/" + personId;
     	
         HttpEntity<String> entity = new HttpEntity<String>(person, headers);		
         /*HttpEntity<String> response = */restTemplate.put(url, entity, String.class);

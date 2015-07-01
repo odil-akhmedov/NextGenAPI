@@ -47,18 +47,18 @@ function PersonController($scope, $http){
 	$scope.saveEdits = function() {
 		$scope.editable = false;
 		var personData = {
-		    "id":"I56D1C87",
-		    "version":1435095502000,
-		    "creator": "CRS_ROOT",
-		    "creation": 1435095502000,
-		    "realm": "PLATFORM-COVS",
-		    "status": "active",
-		    "name": {
+		    "id": $scope.info.id, //"I56D1C87",
+		    "version": $scope.info.version, //1435095502000,
+		    "creator": $scope.info.creator, //"CRS_ROOT",
+		    "creation": $scope.info.creation, //1435095502000,
+		    "realm": $scope.info.realm, //"PLATFORM-COVS",
+		    "status": $scope.info.status, //"active",
+		    "name": $scope.info.name, /*{
 		        "prefix": "Mr.",
-		        "given": "Aaravader",
-		        "surname": "Kolis"
-		    },
-		    "addresses": [
+		        "given": "Aarav",
+		        "surname": "Kolisidious"
+		    },*/
+		    "addresses": $scope.info.addresses, /* [
 		        {
 		            "streets": [
 		                "86 W Rincon Ave",
@@ -70,10 +70,10 @@ function PersonController($scope, $http){
 		            "country": "US",
 		            "type": "main"
 		        }
-		    ],
-		    "language": "en",
-		    "timezone": "EST5EDT",
-		    "phones": [
+		    ], */
+		    "language": $scope.info.language, //"en",
+		    "timezone": $scope.info.timezone, //"EST5EDT",
+		    "phones": $scope.info.phones, /* [
 		        {
 		            "type": "main",
 		            "number": "248-767-1570"
@@ -82,18 +82,17 @@ function PersonController($scope, $http){
 		            "type": "fax",
 		            "number": "248-669-5679"
 		        }
-		    ],
-		    "title": "User",
-		    "email": "aarav.kolis@desantis.org",
-		    "organization": {
+		    ],*/
+		    "title": $scope.info.title, //"User",
+		    "email": $scope.info.email, //"aarav.kolis@desantis.org",
+		    "organization": $scope.info.organization, /* {
 			   "id": "OPLATFORM-COVS10779993",
 			   "type": "organization",
 			   "realm": "PLATFORM-COVS"
-			},
-		    "currency": "USD"
-		   
+			},*/
+		    "currency": $scope.info.currency //"USD"
 		};
-		var res = $http.post('updatePersonPut', personData);
+		var res = $http.post('updatePersonPut/' + personData.id, personData);
 		res.success(function(data, status, headers, config) {
 			// Data is the JSON returned after a successful POST.
 			$scope.success = true;
@@ -103,6 +102,12 @@ function PersonController($scope, $http){
 			alert("failure message: " + JSON.stringify({data: data}));
 		});
 	};
+	
+	$scope.addStreet = function() {
+		info.addresses.streets.push("");
+		var streetsObj = document.getElementById("streets");
+		streetsObj.parentNode.removeChild("streets");
+	}
 }
 
 </script>
@@ -155,10 +160,11 @@ function PersonController($scope, $http){
 				<span ng-if="editable === true" style="color:black">
 					<div ng-repeat="(key, address) in info.addresses">
 						<table>
-			        	<tr ng-repeat="(key, value) in address.streets">
+			        	<span id="streets"><tr ng-repeat="(key, value) in address.streets">
 			        		<td>Street {{key + 1}}: </td><td><input type="text" data-ng-model="address.streets[key]" class="mediumWidth"></td>
-			        	</tr>
-			        	<tr><td>City: </td><td><input type="text" data-ng-model="address.city" class="mediumWidth"></td></tr></tr>
+			        	</tr></span>
+			        	<tr><td colspan="2"><button ng-click="addStreet()">Add Street</button></td></tr>
+			        	<tr><td>City: </td><td><input type="text" data-ng-model="address.city" class="mediumWidth"></td></tr>
 			        	<tr><td>State: </td><td><input type="text" data-ng-model="address.state" class="mediumWidth"></td></tr>
 			        	<tr><td>Zip: </td><td><input type="text" data-ng-model="address.postal" class="mediumWidth"></td></tr>
 			        	<tr><td>Country: </td><td><input type="text" data-ng-model="address.country" class="mediumWidth"></td></tr>
